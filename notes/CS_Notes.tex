@@ -1,0 +1,275 @@
+\documentclass[12pt]{article}
+\usepackage[english]{babel}
+\usepackage{natbib}
+\usepackage{url}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+%\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{pythonhighlight} 
+\setmarginsrb{2 cm}{2.5 cm}{2 cm}{1.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\usepackage{xcolor}
+\usepackage{soul}
+\newcommand{\mathcolorbox}[2]{\colorbox{#1}{$\displaystyle #2$}}
+\title{CS Fundamentals}                                % Title
+\author{Shahwar Saleem}                               % Author
+\date{12 Sept 2015}                                         % Date
+
+\makeatletter
+\let\thetitle\@title
+\let\theauthor\@author
+\let\thedate\@date
+\makeatother
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\theauthor}
+\lhead{\thetitle}
+\cfoot{\thepage}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+    \centering
+    \vspace*{0.5 cm}
+    \includegraphics[scale = 0.75]{logo_waterloo.png}\\[1.0 cm]  % University Logo
+    %\textsc{\LARGE CS Fundamentals }\\[1.0 cm] 
+    % \textsc{\Large ECE-657}\\[0.5 cm]               % Course Code
+    \rule{\linewidth}{0.2 mm} \\[0.4 cm]
+    { \huge \bfseries \thetitle}\\
+    \rule{\linewidth}{0.2 mm} \\[1.5 cm]
+    
+
+    
+    
+    
+    
+    
+    
+    
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tableofcontents
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Dynamic Programming}
+
+\begin{itemize}
+\item Dynamic programming is a technique to solve a subset of problems in an efficient way. 
+
+\item There are problems which take exponential time to solve if DP is not used. 
+
+\item DP is enhanced recursion. 
+
+\item DP is an improved approach based on recursive solution. DP is recursion with Storage. 
+
+\item Recursion might calculate a same value over an over again within its nested calls. DP uses a storage mechanism to avoid making inefficient recursive calls. 
+
+\item Recursion + Table = Memoization
+
+\item Top-Down approach is when we only use Storage of table, to intelligently calculate further sub-problems. 
+\end{itemize}
+
+\subsection{How to check a problem for DP?}
+\begin{enumerate}
+\item There is a choice to add or remove an item.
+\item An optimal solution is required.  
+\end{enumerate}
+
+\subsection{Approach new DP Problem}
+\begin{itemize}
+\item Write a recursive solution to the problem, EASY.
+\item Memoize the recursive function. 
+\item Then go for TOP-DOWN approach. 
+\end{itemize}
+
+\pagebreak
+
+\subsection{Problem Pattern}
+There are following 10 problem patterns which apply DP:
+
+\begin{enumerate}
+\item 0-1 Knapsack
+	\begin{itemize}
+	\item Subset sum
+	\item Equal sum partition
+	\item Count of subset 
+	\item Minimum subset sum difference
+	\item Count the number of subset with a given difference
+	\item Target sum
+	\end{itemize}
+\item Unbounded Knapsack
+\item Fibonacci
+\item LCS: Longest Common Subsequence
+\item LIS: Longest Increasing Subsequence
+\item Kadane\'s Algorithm
+\item Matrix Chain Multiplication*
+\item DP on Trees
+\item DP on Grid
+\item Others
+
+\end{enumerate}
+
+\subsection{Detailed Knapsack Visit}
+
+\subsubsection*{Problem Statelemt}
+Knapsack problem is when we are given a bag of weight W, a weight array Wt and a value array Val.
+
+We have to output the maximum value output with choices of input in bag. The condition is sum of weights is less than or equal to W.
+
+Knapsack has following types:
+
+\begin{itemize}
+\item 0-1 Knapsack: value is added or not.
+\item Fractional Knapsack: we can add fraction of an item.
+\item Unbounded Knapsack: Item can be repeated!
+\end{itemize}
+
+\subsubsection{Knapsack: Recursive}
+
+\begin{python}
+def recursive_knapsack(wt, val, W):
+
+    # Smallest possible input
+    if len(wt) == 0 or W == 0:
+        return 0
+
+    # Get rid of last item because weight of item is greater
+    # than the W itself.
+    if wt[-1] > W:
+        # Advance in recursion without last item.
+        return recursive_knapsack(wt[:-1], val[:-1], W)
+    else:
+        # Weight of last item is within W, thus, 2 possibilities are there:
+        # max(consider item, not consider item)
+        return max(val[-1] + recursive_knapsack(wt[:-1], val[:-1], W-wt[-1]),
+                   recursive_knapsack(wt[:-1], val[:-1], W))
+\end{python}
+
+\begin{itemize}
+\item Method calls itself with a smaller sub problem.
+\item Repetitive calls to same method utilizes call stack. 
+\item Recursive solutions are simple but inefficient as system stacks may overflow. 
+\end{itemize}
+
+Whenever there is a single recursive call, DP might not be best to use. DP is helpful when 2 or more recursive calls are present within the same method.
+
+To come up with recursive solution:
+\begin{itemize}
+\item Think of the smallest possible input in the problem (BASE CONDITION)
+\item Think about choice diagram. If there is an item, make a small condition diagram of effects or including or not including that item.
+
+\end{itemize}
+
+\pagebreak
+\subsubsection{Knapsack: Memoize}
+
+\begin{python}
+def knapsack_memioze(wt, val, W):
+    t = []
+
+    n = len(wt)
+
+    # Memoization table.
+    for i in range(n + 1):
+        t.append([-1] * (W + 1))
+
+    def helper_memoize(wt, val, W, n):
+
+        # Smallest possible input
+        if n == 0 or W == 0:
+            return 0
+
+        if t[n][W] != -1:
+            # If memory table already has that entry calculated, use it.
+            return t[n][W]
+
+        # Get rid of last item because weight of item is greater
+        # than the W itself.
+        if wt[n - 1] > W:
+            # Advance in recursion without last item.
+            # but store the results in the memory table.
+            t[n][W] = helper_memoize(wt, val, W, n - 1)
+            return t[n][W]
+        else:
+            # Weight of last item is within W, thus, 2 possibilities are there:
+            # max(consider item, not consider item)
+            # store the results in memory table.
+            t[n][W] = max(val[n - 1] + helper_memoize(wt, val, W - wt[n - 1], n - 1),
+                          helper_memoize(wt, val, W, n - 1))
+
+            return t[n][W]
+
+    return helper_memoize(wt, val, W, n)
+\end{python}
+
+\begin{itemize}
+\item Memoization is a combination of recursive solution and storage. 
+
+\item Some extra storage is used to avoid extra recursive calls. This storage stores values that a recursive solution tends to calculate over and over again. 
+
+\item Recursion is still involves, therefore, there is a chance for the stack to overflow. 
+
+\item Therefore, memiozation is useful where number of recursive calls are less than system stack.
+
+\end{itemize}
+\pagebreak
+\subsubsection{Knapsack: Top Down DP}
+
+\begin{python}
+    n = len(wt)
+
+    # DP One line initialization.
+    t = [[0 if i == 0 or j == 0 else -1 for j in range(W+1)] for i in range(n+1)]
+
+    # Because initialization is already done for n = 0, W = 0.
+    for i in range(1, n+1):
+        for j in range(1, W+1):
+            if wt[i-1] <= j:
+                # Convert n to i and W to j from recursive solution.
+                t[i][j] = max(val[i-1]+t[i-1][j-wt[i-1]], t[i-1][j])
+            else:
+                t[i][j] = t[i - 1][j]
+
+            pprint(t)
+
+    return t[n][W]
+    
+# The final DP table becomes:
+[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [0, 3, 3, 3, 4, 7, 7, 7, 7, 7, 7],
+ [0, 3, 3, 3, 4, 7, 8, 8, 8, 9, 12],
+ [0, 3, 3, 3, 4, 7, 8, 8, 10, 10, 12]]
+\end{python}
+
+\subsection{Problems}
+
+\subsubsection{Subset Sum Problem}
+
+Input: [ 2  3  7  8  10 ]
+
+Sum: 11
+
+Is there a subset of array which has sum 11?
+
+Output: True/False
+
+\textbf{Similarity}: Sum is Weight of Knapsack. If there is only 1 array consider it Weight array in Knapsack. There is also choice weather to add an element in subset or not. 
+
+
+\end{document}
+ 
