@@ -1,2 +1,4 @@
-# algorithms-diaries
-A set of Jupyter notebooks meant to keep as notes for my own use. 
+# Grokking Coding Interview Patterns
+
+
+## 1. Sliding Window
