@@ -55,8 +55,7 @@ def smallest_subarray_with_given_sum(s, arr):
     return min_length
 
 # Given a string, find the length of the longest substring in it with no more than K distinct characters.
-
-#         s
+#     s
 # a r a a c i", K=2 => 4 "
 #           e
 #
