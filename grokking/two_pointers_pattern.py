@@ -195,11 +195,11 @@ def dutch_flag_sort(arr):
 
 if __name__=="__main__":
 
-    # A = [1, 2, 3, 4, 6]
-    # target=6
-    # print("Hash: "+ str(pair_with_targetsum_hash(A, target)))
-    # print("2 Pointer: "+ str(pair_with_targetsum(A, target)))
-    #
-    # print("Remove Key: " + str(remove_key([3, 2, 3, 6, 3, 10, 9, 3], key=3)))
+    A = [1, 2, 3, 4, 6]
+    target=6
+    print("Hash: "+ str(pair_with_targetsum_hash(A, target)))
+    print("2 Pointer: "+ str(pair_with_targetsum(A, target)))
+    print("Remove Key: " + str(remove_key([3, 2, 3, 6, 3, 10, 9, 3], key=3)))
     print("Squares: " + str(make_squares([-2, -1, 0, 2, 3])))
     print("Search triplets"+str(search_triplets([-3, 0, 1, 2, -1, 1, -2])))
+    print("Dutch Flag" + str(dutch_flag_sort([1, 0, 2, 1, 0])))
